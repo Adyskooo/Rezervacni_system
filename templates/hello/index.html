@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+    <title>{{ title }}</title>
+
+   <!--[if (gt IE 8)]><!-->
+   <link rel="stylesheet" href="style.css">
+   <!--<![endif]-->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+
+<body>
+Ahoj Tade
+<p>
+{{ test.0 | default_if_none:"Nic"}}
+<p>
+{{ test2.foo }}
+</body></html>
