@@ -1,0 +1,46 @@
+{% extends 'rezervace/base.html' %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-success text-white py-3 text-center">
+                    <h2 class="h4 mb-0 text-white"> Zapomenuté heslo</h2>
+                </div>
+                <div class="card-body p-4 text-center">
+                    <p class="mb-4">Zadejte svůj e-mail. Pošleme Vám 6místný kód pro obnovení přístupu k Vašemu účtu.</p>
+                    
+                    <form method="post" autocomplete="off">
+                        {% csrf_token %}
+                        <div class="mb-3 text-start">
+                            <label for="{{ form.email.id_for_label }}" class="form-label fw-bold">{{ form.email.label }}</label>
+                            {{ form.email }}
+                            {% for error in form.email.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-success btn-lg fw-bold">Odeslat kód</button>
+                            <a href="{% url 'login' %}" class="btn btn-link text-decoration-none">Zpět k přihlášení</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-label { color: #0068a3 !important; }
+    input[type="email"] { 
+        display: block;
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+        border: 1px solid #ced4da;
+        border-radius: 0.5rem;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends 'rezervace/base.html' %}
+
+{% block content %}
+<div class="row mt-4 mb-5">
+    <div class="col-12">
+        <h2 class="display-6 fw-bold text-dark mb-4">Můj profil</h2>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-success text-white py-3">
+                <h5 class="mb-0">Moje osobní údaje</h5>
+            </div>
+            <div class="card-body">
+                {% if uspech %}
+                    <div class="alert alert-success">Údaje byly úspěšně uloženy!</div>
+                {% endif %}
+
+                <form method="POST" id="profilForm">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-muted fw-bold">E-mail (Přihlašovací jméno):</label>
+                        <input type="text" class="form-control text-muted bg-light" value="{{ user.email }}" disabled>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Jméno:</label>
+                        <input type="text" name="jmeno" id="poleJmeno" class="form-control bg-light upravitelne-pole" value="{{ user.first_name }}" readonly>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Příjmení:</label>
+                        <input type="text" name="prijmeni" class="form-control bg-light upravitelne-pole" value="{{ user.last_name }}" readonly>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Telefon:</label>
+                        <input type="text" name="telefon" class="form-control bg-light upravitelne-pole" value="{{ profil.telefon|default_if_none:'' }}" readonly>
+                    </div>
+                    
+                    <button type="button" id="btnUpravit" class="btn btn-outline-secondary w-100 fw-bold" onclick="povolitUpravy()">
+                        Upravit údaje
+                    </button>
+                    
+                    <button type="submit" id="btnUlozit" class="btn btn-success w-100 fw-bold d-none">
+                        Uložit změny
+                    </button>
+                    
+                    <div class="mt-4 pt-3 border-top text-center">
+                        <a href="{% url 'zmena_hesla_profil' %}" class="text-success text-decoration-none small fw-bold">
+                             Změnit přístupové heslo
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8 mb-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-dark text-white py-3">
+                <h5 class="mb-0">Historie mých rezervací</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Prostor</th>
+                                <th>Datum</th>
+                                <th>Čas od-do</th>
+                                <th>Stav</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rez in moje_rezervace %}
+                            <tr>
+                                <td class="ps-3 fw-bold text-success">{{ rez.prostor.nazev }}</td>
+                                <td>{{ rez.zacatek|date:"d. m. Y" }}</td>
+                                <td>{{ rez.zacatek|date:"H:i" }} - {{ rez.konec|date:"H:i" }}</td>
+                                
+                                <td>
+                                    {% if rez.schvaleno %}
+                                        <span class="badge bg-success">Potvrzeno</span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark">Zpracovává se</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">
+                                    Zatím nemáte žádné rezervace. <br>
+                                    <a href="{% url 'seznam_prostoru' %}" class="btn btn-sm btn-success mt-2">Vytvořit první rezervaci</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function povolitUpravy() {
+        // Najdeme všechna pole, která mají naši pomocnou třídu 'upravitelne-pole'
+        const pole = document.querySelectorAll('.upravitelne-pole');
+        
+        // Projdeme je a odemkneme je (smažeme readonly a šedé pozadí)
+        pole.forEach(p => {
+            p.removeAttribute('readonly');
+            p.classList.remove('bg-light');
+        });
+
+        // Schováme šedé tlačítko "Upravit"
+        document.getElementById('btnUpravit').classList.add('d-none');
+        
+        // Ukážeme zelené tlačítko "Uložit změny"
+        document.getElementById('btnUlozit').classList.remove('d-none');
+
+        // Bonus pro uživatele: automaticky mu blikneme kurzorem do políčka Jméno, ať může hned psát
+        document.getElementById('poleJmeno').focus();
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends 'rezervace/base.html' %}
+
+{% block content %}
+<style>
+    /* CSS styly pro náš vlastní kalendář */
+    .kalendar-table th, .kalendar-table td { text-align: center; vertical-align: middle; padding: 5px; border: none; }
+    .kalendar-table th { color: #6c757d; font-weight: normal; padding-bottom: 10px; }
+    .den-box { display: block; width: 45px; height: 45px; line-height: 45px; margin: 0 auto; text-decoration: none; font-weight: bold; transition: all 0.2s; }
+    
+    /* Barvy podle tvé předlohy */
+    .den-volno { background-color: #0068a3; color: white; } /* Modrá */
+    .den-volno:hover { background-color: #fff200; color: #000000; transform: scale(1.1); }
+    
+    .den-obsazeno { background-color: white; border: 2px solid #dc3545; color: #dc3545; cursor: not-allowed; } /* Červený obrys */
+    
+    .den-vybrano { background-color: #dc3545; color: white; } /* Plná červená */
+    
+    .den-minulost { background-color: #e9ecef; color: #adb5bd; cursor: not-allowed; } /* Šedá */
+</style>
+
+<div class="row justify-content-center mt-4 mb-5">
+    <div class="col-md-8">
+        <div class="card shadow border-0">
+            <div class="card-header bg-success text-white py-3">
+                <h4 class="mb-0">Krok 1: Výběr termínu</h4>
+            </div>
+            
+            <div class="card-body p-4">
+                <h5 class="text-secondary mb-4 pb-2 border-bottom">
+                    Prostor: <strong class="text-dark">{{ vybrany_prostor.nazev }}</strong>
+                </h5>
+
+                <div class="mb-5 bg-light p-4 rounded border">
+                    <h5 class="fw-bold text-success text-center mb-4">Vyberte datum</h5>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <a href="?prostor={{ vybrany_prostor.id }}&rok={{ pred_r }}&mesic={{ pred_m }}" class="btn btn-outline-secondary btn-sm fw-bold">&larr; Předchozí</a>
+                        <h5 class="mb-0 fw-bold">{{ nazev_mesice }} {{ zobrazovany_rok }}</h5>
+                        <a href="?prostor={{ vybrany_prostor.id }}&rok={{ dalsi_r }}&mesic={{ dalsi_m }}" class="btn btn-outline-secondary btn-sm fw-bold">Další &rarr;</a>
+                    </div>
+
+                    <table class="table kalendar-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Po</th><th>Út</th><th>St</th><th>Čt</th><th>Pá</th><th>So</th><th>Ne</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tyden in kalendar_data %}
+                            <tr>
+                                {% for den in tyden %}
+                                <td>
+                                    {% if den.stav == 'prazdny' %}
+                                        {% elif den.stav == 'minulost' or den.stav == 'obsazeno' %}
+                                        <div class="den-box den-{{ den.stav }} shadow-sm">{{ den.den }}</div>
+                                    {% else %}
+                                        <a href="?prostor={{ vybrany_prostor.id }}&datum={{ den.datum }}&rok={{ zobrazovany_rok }}&mesic={{ zobrazovany_mesic }}" 
+                                           class="den-box den-{{ den.stav }} shadow-sm">
+                                            {{ den.den }}
+                                        </a>
+                                    {% endif %}
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <div class="mt-4 pt-3 border-top small text-muted">
+                        <strong>Legenda:</strong><br>
+                        <span class="d-inline-block bg-danger text-white text-center rounded me-1" style="width: 25px;">X</span> Vybraný den &nbsp;&nbsp;
+                        <span class="d-inline-block bg-success text-white text-center rounded me-1" style="width: 25px;">X</span> Dny s volnými termíny &nbsp;&nbsp;
+                        <span class="d-inline-block border border-danger text-danger text-center rounded me-1" style="width: 25px;">X</span> Plně obsazeno
+                    </div>
+                </div>
+
+                {% if vybrane_datum %}
+                    <h5 class="fw-bold mb-3 mt-4 text-success" id="casy">Dostupné časy ({{ vybrane_datum }}):</h5>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="prostor" value="{{ vybrany_prostor.id }}">
+                        <input type="hidden" name="datum" value="{{ vybrane_datum }}">
+
+                        <div class="table-responsive shadow-sm border rounded">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Od - Do</th>
+                                        <th>Stav</th>
+                                        <th class="text-end">Akce</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for slot in sloty %}
+                                    <tr class="{% if slot.obsazeno %}table-secondary text-muted{% endif %}">
+                                        <td class="fw-bold fs-5">{{ slot.cas_od }} - {{ slot.cas_do }}</td>
+                                        <td>
+                                            {% if slot.obsazeno %}
+                                                <span class="text-secondary fw-bold">Obsazeno</span>
+                                            {% else %}
+                                                <span class="text-success fw-bold">Volno</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-end">
+                                            {% if slot.obsazeno %}
+                                                <button class="btn btn-secondary btn-sm" disabled>Nedostupné</button>
+                                            {% else %}
+                                                <button type="submit" name="vybrany_cas" value="{{ slot.hodnota }}" class="btn btn-success btn-sm fw-bold px-3">
+                                                    Rezervovat
+                                                </button>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                {% else %}
+                    <div class="alert alert-info text-center mt-4 shadow-sm border-0">
+                        Nejprve prosím vyberte zelený den v kalendáři výše. Časové úseky se automaticky rozbalí.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'seznam_prostoru' %}" class="text-muted text-decoration-none fw-bold">
+                &larr; Zpět na výběr jiného prostoru
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

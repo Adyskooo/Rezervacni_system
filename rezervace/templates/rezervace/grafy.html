@@ -1,0 +1,95 @@
+{% extends 'rezervace/base.html' %}
+
+{% block content %}
+<div class="row mt-4 mb-5">
+    <div class="col-12 d-flex justify-content-between align-items-center mb-4">
+        <h2 class="display-6 fw-bold text-dark mb-0">Grafy rezervací</h2>
+        <a href="{% url 'sprava_rezervaci' %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Zpět na správu</a>
+    </div>
+
+    <!-- Chart.js knihovna -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <div class="col-12 mb-4">
+        <div class="card shadow border-0 h-100">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold" id="chartTitle">Počet rezervací</h5>
+                <div class="btn-group" role="group" aria-label="Výběr časového horizontu">
+                    <button type="button" class="btn btn-outline-primary active" onclick="zmenitGraf('den', this)">Den</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="zmenitGraf('tyden', this)">Týden</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="zmenitGraf('mesic', this)">Měsíc</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="zmenitGraf('rok', this)">Rok</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="mainChart" style="max-height: 500px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Data předaná z Django view
+    const dataDen = {{ graf_den|safe }};
+    const dataTyden = {{ graf_tyden|safe }};
+    const dataMesic = {{ graf_mesic|safe }};
+    const dataRok = {{ graf_rok|safe }};
+
+    const datasets = {
+        'den': { labels: dataDen.labels, data: dataDen.data, bg: 'rgba(54, 162, 235, 0.5)', border: 'rgba(54, 162, 235, 1)' },
+        'tyden': { labels: dataTyden.labels, data: dataTyden.data, bg: 'rgba(75, 192, 192, 0.5)', border: 'rgba(75, 192, 192, 1)' },
+        'mesic': { labels: dataMesic.labels, data: dataMesic.data, bg: 'rgba(255, 159, 64, 0.5)', border: 'rgba(255, 159, 64, 1)' },
+        'rok': { labels: dataRok.labels, data: dataRok.data, bg: 'rgba(153, 102, 255, 0.5)', border: 'rgba(153, 102, 255, 1)' }
+    };
+
+    let mainChart;
+
+    function initChart() {
+        const ctx = document.getElementById('mainChart').getContext('2d');
+        const initialData = datasets['den'];
+        
+        mainChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: initialData.labels,
+                datasets: [{
+                    label: 'Počet rezervací',
+                    data: initialData.data,
+                    backgroundColor: initialData.bg,
+                    borderColor: initialData.border,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function zmenitGraf(perioda, btnElement) {
+        // Změna aktivního tlačítka
+        document.querySelectorAll('.btn-group .btn').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+
+        // Aktualizace dat grafu
+        const newData = datasets[perioda];
+        mainChart.data.labels = newData.labels;
+        mainChart.data.datasets[0].data = newData.data;
+        mainChart.data.datasets[0].backgroundColor = newData.bg;
+        mainChart.data.datasets[0].borderColor = newData.border;
+        mainChart.update();
+    }
+
+    // Spuštění po načtení stránky
+    window.onload = initChart;
+</script>
+{% endblock %}

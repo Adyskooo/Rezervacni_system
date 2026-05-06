@@ -1,0 +1,55 @@
+{% extends 'rezervace/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center mt-4 mb-5">
+    <div class="col-md-6">
+        <div class="card shadow border-0">
+            <div class="card-header bg-success text-white py-3">
+                <h4 class="mb-0">Krok 2: Dokončení rezervace</h4>
+            </div>
+            <div class="card-body p-4">
+                
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.name == 'heslo' %}
+                                <div id="password-reqs"></div>
+                            {% endif %}
+                            {% if field.help_text %}
+                                <div class="form-text">{{ field.help_text }}</div>
+                            {% endif %}
+                            <div class="text-danger small">{{ field.errors }}</div>
+                        </div>
+                    {% endfor %}
+                    
+                    <button type="submit" class="btn btn-success btn-lg w-100 mt-3 fw-bold shadow-sm">
+                        Potvrdit a odeslat rezervaci
+                    </button>
+                </form>
+
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <a href="javascript:history.back()" class="text-muted text-decoration-none fw-bold">
+                &larr; Zpět na výběr času
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('input:not([type="checkbox"]), select, textarea').forEach(el => el.classList.add('form-control'));
+        document.querySelectorAll('input[type="checkbox"]').forEach(el => el.classList.add('form-check-input'));
+
+        // Aktivovat živou kontrolu hesla
+        if (typeof setupPasswordValidation === 'function') {
+            setupPasswordValidation('input[name="heslo"]', '#password-reqs');
+        }
+    });
+</script>
+{% endblock %}

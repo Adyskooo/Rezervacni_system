@@ -1,0 +1,42 @@
+[
+{
+    "model": "rezervace.prostor",
+    "pk": 1,
+    "fields": {
+        "nazev": "Velká tìlocvièna u ZŠ Návsí",
+        "popis": "Správce: David Tatarka mail: telocvicna@navsi.cz, mob.: 737 695 544 Cena 900 Kè za hodinu vèetnì šatny a sprchy. Lze i objednat pouze polovinu haly za cenu 450 Kè za hodinu. Storno poplatek 100% pøi zrušení pozdìji než 2 dny pøedem.\r\nNávsí 1165, Návsí 73992"
+    }
+},
+{
+    "model": "rezervace.prostor",
+    "pk": 2,
+    "fields": {
+        "nazev": "Víceúèelová hrací plocha Jaseni",
+        "popis": "Správce: David Tatarka mail: telocvicna@navsi.cz, mob.: 737 695 544\r\nJaseni 343, Návsí 73992"
+    }
+},
+{
+    "model": "rezervace.prostor",
+    "pk": 3,
+    "fields": {
+        "nazev": "Víceúèelové høištì U Kostela",
+        "popis": "Správce: Renáta Kantorová, mail: rena.kantor@seznam.cz, mob.: 739096741.\r\nPod Výtopnou 190, Návsí 73992"
+    }
+},
+{
+    "model": "rezervace.prostor",
+    "pk": 4,
+    "fields": {
+        "nazev": "Sportovní areál nad Masarykovou ZŠ",
+        "popis": "Nejedná se o novou sportovní halu. Správce: Marcela Lasotová, email: marcela.lasotova@navsi.cz, mob.: 731446787.\r\nNávsí 345, Návsí 73992"
+    }
+},
+{
+    "model": "rezervace.prostor",
+    "pk": 5,
+    "fields": {
+        "nazev": "Fotbalové høištì U Pily",
+        "popis": "Správce: Marcela Lasotová, email: marcela.lasotova@navsi.cz, mob.: 731446787.\r\nNávsí 990, Návsí 73992"
+    }
+}
+]

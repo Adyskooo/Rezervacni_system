@@ -1,0 +1,34 @@
+{% extends 'rezervace/base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="display-5 fw-bold text-dark">Prostory k rezervaci</h1>
+        <p class="lead text-muted">Vyberte si prostor, který si přejete zarezervovat, a pokračujte kliknutím na tlačítko.</p>
+    </div>
+</div>
+
+<div class="row">
+    {% for prostor in prostory %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <h4 class="card-title text-success fw-bold">{{ prostor.nazev }}</h4>
+                    <p class="card-text text-secondary mt-3">{{ prostor.popis }}</p>
+                </div>
+                <div class="card-footer bg-white border-0 pb-4 pt-0">
+                    <a href="{% url 'vytvorit_rezervaci_krok1' %}?prostor={{ prostor.id }}" class="btn btn-success btn-lg w-100 shadow-sm">
+                        Zarezervovat termín
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="alert alert-warning text-center" role="alert">
+                Zatím nejsou k dispozici žádné prostory k rezervaci.
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'rezervace/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center mt-5 mb-5">
+    <div class="col-md-5">
+        <div class="card shadow border-0">
+            <div class="card-header bg-dark text-white py-3">
+                <h4 class="mb-0">Přihlášení uživatele</h4>
+            </div>
+            <div class="card-body p-4">
+                
+                {% if form.errors %}
+                    <div class="alert alert-danger">Zadali jste nesprávný e-mail nebo heslo. Zkuste to prosím znovu.</div>
+                {% endif %}
+                
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-muted">E-mail (uživatelské jméno):</label>
+                        {{ form.username }}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label class="form-label fw-bold text-muted mb-0">Heslo:</label>
+                            <a href="{% url 'zapomenute_heslo' %}" class="text-success small text-decoration-none fw-bold">Zapomněli jste heslo?</a>
+                        </div>
+                        {{ form.password }}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow-sm">
+                        Přihlásit se
+                    </button>
+                </form>
+
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <span class="text-muted">Nemáte ještě účet?</span>
+            <a href="{% url 'registrace' %}" class="text-success fw-bold text-decoration-none">Vytvořte si ho zdarma</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('input').forEach(el => el.classList.add('form-control'));
+</script>
+{% endblock %}
