@@ -20,8 +20,7 @@ class RezervaceForm(forms.ModelForm):
         label="Heslo (vyplňte pro vytvoření účtu)", 
         widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}), 
         required=False,
-        validators=[validate_password_strength],
-        help_text="Minimálně 8 znaků, velké a malé písmeno, aspoň jedna číslice."
+        validators=[validate_password_strength]
     )
 
     class Meta:

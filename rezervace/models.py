@@ -41,7 +41,7 @@ class Prostor(models.Model):
 class Rezervace(models.Model):
     prostor = models.ForeignKey(Prostor, on_delete=models.CASCADE, verbose_name="Prostor")
     
-    # Uživatel už je nepovinný
+    # Uživatel je nepovinný
     uzivatel = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Registrovaný uživatel")
     
     jmeno = models.CharField(max_length=50, verbose_name="Jméno")
