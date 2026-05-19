@@ -155,7 +155,7 @@ def vytvorit_rezervaci_krok2(request):
     # --- PŘEDVYPLNĚNÍ DAT (včetně telefonu z profilu) ---
     initial_data = {}
     if request.user.is_authenticated:
-        profil, created = Profil.objects.get_or_create(uzivatel=request.user)
+        profil, _ = Profil.objects.get_or_create(uzivatel=request.user)
         initial_data = {
             'jmeno': request.user.first_name,
             'prijmeni': request.user.last_name,
@@ -177,7 +177,7 @@ def vytvorit_rezervaci_krok2(request):
             if request.user.is_authenticated:
                 nova_rezervace.uzivatel = request.user
                 
-                profil, created = Profil.objects.get_or_create(uzivatel=request.user)
+                profil, _ = Profil.objects.get_or_create(uzivatel=request.user)
                 profil.telefon = nova_rezervace.telefon
                 profil.save()
             else:
@@ -243,8 +243,7 @@ def registrace(request):
 # --- MŮJ PROFIL ---
 @login_required
 def muj_profil(request):
-    profil, created = Profil.objects.get_or_create(uzivatel=request.user)
-    uspech = False 
+    profil, _ = Profil.objects.get_or_create(uzivatel=request.user)
 
     if request.method == 'POST':
         request.user.first_name = request.POST.get('jmeno', '')
@@ -253,7 +252,6 @@ def muj_profil(request):
 
         profil.telefon = request.POST.get('telefon', '')
         profil.save()
-        uspech = True
 
     moje_rezervace = Rezervace.objects.filter(uzivatel=request.user).order_by('-zacatek')
 
@@ -272,7 +270,6 @@ def zmena_hesla_profil(request):
             user = request.user
             stare_heslo = form.cleaned_data['stare_heslo']
             nove_heslo = form.cleaned_data['nove_heslo']
-            potvrzeni = form.cleaned_data['potvrzeni_hesla']
             
             if not user.check_password(stare_heslo):
                 messages.error(request, "Zadali jste chybné současné heslo.")
@@ -361,7 +358,6 @@ def nove_heslo(request):
         form = NoveHesloForm(request.POST)
         if form.is_valid():
             nove_heslo = form.cleaned_data['nove_heslo']
-            potvrzeni = form.cleaned_data['potvrzeni_hesla']
             
             email = request.session['reset_email']
             user = User.objects.get(email=email)

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils import timezone
+import datetime
 
 # --- NOVÝ MODEL PROFILU ---
 class Profil(models.Model):
@@ -18,8 +19,6 @@ class ResetHeslaKod(models.Model):
     pouzito = models.BooleanField(default=False)
 
     def platnost_vyprsela(self):
-        from django.utils import timezone
-        import datetime
         return timezone.now() > self.vytvoreno + datetime.timedelta(minutes=15)
         
     def __str__(self):
